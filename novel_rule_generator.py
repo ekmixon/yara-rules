@@ -11,9 +11,12 @@ YARA_TEMPLATE = """
     }}
 """
 if len(sys.argv) != 3:
-    sys.exit("usage: %s RULE_NAME INPUT" % sys.argv[0])
+    sys.exit(f"usage: {sys.argv[0]} RULE_NAME INPUT")
 strings = []
 with open(sys.argv[2], "r") as fp:
-    for number, line in enumerate(fp):
-        strings.append("$s%d = /%s/" % (number, re.escape(line.strip())))
+    strings.extend(
+        "$s%d = /%s/" % (number, re.escape(line.strip()))
+        for number, line in enumerate(fp)
+    )
+
 print(YARA_TEMPLATE.format(rule_name=sys.argv[1], string_defs="\n\t".join(strings)))
